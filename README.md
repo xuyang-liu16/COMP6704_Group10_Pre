@@ -35,22 +35,22 @@ We train the **same** L2-regularized logistic regression model with **four** con
 
 Minimize the average logistic loss plus an L2 penalty:
 
-\[
+$$
 \min_w \; F(w) = f(w) + g(w), \quad
 f(w)=\tfrac{1}{n}\sum_i \log\bigl(1+e^{-y_i x_i^\top w}\bigr),\quad
 g(w)=\tfrac{\lambda}{2}\|w\|_2^2
-\]
+$$
 
-with \(\lambda=0.01\). Shared utilities live in [`problem.py`](problem.py), [`data.py`](data.py), and [`metrics.py`](metrics.py).
+with $\lambda=0.01$. Shared utilities live in [`problem.py`](problem.py), [`data.py`](data.py), and [`metrics.py`](metrics.py).
 
 ## 📂 Algorithm locations
 
 | File | Method | Owner | What it implements |
 | --- | --- | --- | --- |
-| [`algorithms/gd.py`](algorithms/gd.py) | Gradient Descent | WANG Zeqing | Full-batch GD with Armijo backtracking; step based on \(1/L\) |
-| [`algorithms/nesterov.py`](algorithms/nesterov.py) | Nesterov | LIU Xuyang | Look-ahead momentum; general-convex \(t\)-schedule; stop on \(\|\nabla F(w)\|\) |
+| [`algorithms/gd.py`](algorithms/gd.py) | Gradient Descent | WANG Zeqing | Full-batch GD with Armijo backtracking; step based on $1/L$ |
+| [`algorithms/nesterov.py`](algorithms/nesterov.py) | Nesterov | LIU Xuyang | Look-ahead momentum; general-convex $t$-schedule; stop on $\Vert\nabla F(w)\Vert$ |
 | [`algorithms/fista.py`](algorithms/fista.py) | FISTA | WU Aoqi | Loss gradient + closed-form L2 proximal shrink; same momentum as Nesterov |
-| [`algorithms/admm.py`](algorithms/admm.py) | ADMM | ZHAO Jixin | Split \(w/z\) with dual updates, residual checks, inner solves |
+| [`algorithms/admm.py`](algorithms/admm.py) | ADMM | ZHAO Jixin | Split $w,z$ with dual updates, residual checks, inner solves |
 
 Do **not** cross-edit another member’s algorithm file. Ownership rules are also in [`AGENTS.md`](AGENTS.md).
 
