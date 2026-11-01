@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.DS_Store
+.codex_logs/
+.pptx-validation/
+slides/.pptx-build/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+slides/beamer_preview/
+slides/beamer_preview_v2/
+slides/final_preview/

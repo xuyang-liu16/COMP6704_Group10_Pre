@@ -1,0 +1,554 @@
+% !TEX program = xelatex
+\documentclass[10pt,aspectratio=169]{beamer}
+\usepackage{poly}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{PingFang SC}
+\setCJKsansfont{PingFang SC}
+\setCJKmonofont{PingFang SC}
+\usepackage{booktabs}
+\pdfstringdefDisableCommands{\def\translate#1{#1}}
+\providecommand{\deckroot}{.}
+
+% Keep poly.sty and its artwork intact; suppress automatic Contents frames.
+\AtBeginSection[]{}
+\setbeamercolor{head}{bg=polyured}
+\setbeamertemplate{footline}{%
+  \ifnum\value{framenumber}>1
+    \hbox to \paperwidth{\hfil\usebeamerfont{footline}\color{polyugrey}%
+      \insertsectionhead\hspace{1em}\insertframenumber/\inserttotalframenumber
+      \hspace*{12pt}}\vskip3pt
+  \fi
+  \usebeamertemplate{footline progress}}
+\defbeamertemplate{footline progress}{poly}{%
+  \ifnum\value{framenumber}>1
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2pt]{progress bar}
+      \pgfmathsetlengthmacro{\progresswidth}{\paperwidth*min(1,\insertframenumber/max(1,\inserttotalframenumber))}
+      \begin{beamercolorbox}[wd=\progresswidth,ht=2pt]{progress bar progress}
+      \end{beamercolorbox}
+    \end{beamercolorbox}
+  \fi}
+\setbeamertemplate{footline progress}[poly]
+\newcommand{\sourcecredit}[1]{\par\smallskip{\scriptsize\color{polyugrey}#1\par}}
+
+\title{Convex Optimization\\for Machine Learning}
+\subtitle{COMP6704 Group 10: L2-Regularized Logistic Regression}
+\author{LIU Xuyang \and WANG Zeqing \and WU Aoqi \and ZHAO Jixin}
+\institute[COMP]{Department of Computing, The Hong Kong Polytechnic University}
+\date{3 November 2026}
+
+\begin{document}
+\begin{frame}
+\titlepage
+\note{Good evening. We are Group 10. We compare four ways to train the same model. We want to see how much work each method needs.}
+\end{frame}
+
+\section{Opening}
+
+% 2
+\begin{frame}{Agenda and speakers}
+\centering
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{llr}
+\toprule
+Part & Speaker & Minutes \\
+\midrule
+Opening & LIU Xuyang & 3 \\
+Background & WANG Zeqing & 7 \\
+Methods & WU Aoqi & 8 \\
+Results & ZHAO Jixin & 8 \\
+Conclusion & LIU Xuyang & 4 \\
+\bottomrule
+\end{tabular}
+\par\medskip
+30-minute presentation, followed by 10 minutes of Q\&A.
+\note{I will introduce our question. Zeqing will explain the model, and Aoqi will explain the methods. Jixin will show the results. I will return for the conclusion.}
+\end{frame}
+
+% 3
+\begin{frame}{One training problem, four solvers}
+\begin{block}{Our question}
+How much work does each solver need to train the same model?
+\end{block}
+\begin{itemize}
+  \item Same model, data and starting point.
+  \item Same L2 penalty and stopping target.
+  \item Compare training error, time and test accuracy.
+\end{itemize}
+\[
+\min_w F(w)
+\quad\text{using GD, Nesterov, FISTA or ADMM.}
+\]
+This problem has one best set of weights.
+\note{A solver is the rule we use to update the model weights. All four methods solve the same training problem. We check how close they get to the best objective value. We also check time and test accuracy.}
+\end{frame}
+
+\section{Background}
+
+% 4
+\begin{frame}{L2-regularized logistic regression}
+\[
+\min_{w\in\mathbb{R}^d}F(w),\qquad F(w)=f(w)+g(w),
+\]
+\[
+f(w)=\frac{1}{n}\sum_{i=1}^{n}\log\!\left(1+e^{-y_i x_i^\top w}\right),
+\qquad g(w)=\frac{\lambda}{2}\|w\|_2^2.
+\]
+\begin{itemize}
+  \item $x_i$: input features. $y_i$: class label, $-1$ or $+1$.
+  \item $n$: training examples. $w$: the $d$ model weights.
+  \item Loss measures prediction errors. L2 discourages large weights.
+  \item $\lambda=0.01$. The penalty includes the bias.
+\end{itemize}
+\sourcecredit{Implementation: \texttt{problem.py}, \texttt{data.py}.}
+\note{Capital F has two parts: the loss and the penalty. The loss measures how well the model fits the training labels. The penalty discourages large weights. We include the bias in that penalty.}
+\end{frame}
+
+% 5
+\begin{frame}{Predictions and the gradient}
+Put the training examples in the rows of $X\in\mathbb{R}^{n\times d}$.
+\[
+p_i=\sigma(x_i^\top w),\qquad
+\sigma(a)=\frac{1}{1+e^{-a}},\qquad b_i=\frac{y_i+1}{2}.
+\]
+\begin{block}{The gradient tells us how to change the weights}
+\[
+\nabla F(w)=\frac{1}{n}X^\top(p-b)+\lambda w.
+\]
+\end{block}
+\begin{itemize}
+  \item Predict $+1$ when $x_i^\top w\geq0$ and $-1$ otherwise.
+  \item One gradient needs $O(nd)$ work on dense data.
+  \item Train with $F$. Check predictions on separate test data.
+\end{itemize}
+\note{The sigmoid turns a score into a probability. The gradient combines prediction errors from the training examples. It also includes the penalty. Test accuracy uses separate data.}
+\end{frame}
+
+% 6
+\begin{frame}{Why the minimizer is unique}
+Let $D=\operatorname{diag}(p_i(1-p_i))$. Since $0\preceq D\preceq I/4$,
+\[
+\nabla^2F(w)=\frac{1}{n}X^\top D X+\lambda I,
+\qquad
+\lambda I\preceq\nabla^2F(w)\preceq
+\left(\frac{\|X\|_2^2}{4n}+\lambda\right)I.
+\]
+\begin{block}{Two bounds help us choose the steps}
+\[
+\mu=\lambda>0,\qquad L_f=\frac{\|X\|_2^2}{4n},\qquad L=L_f+\lambda.
+\]
+\end{block}
+\begin{itemize}
+  \item The positive L2 penalty gives one best answer, $w^\star$.
+  \item This property is called \alert{strong convexity}.
+  \item $L$ limits how fast the gradient changes.
+\end{itemize}
+\note{The positive penalty gives the objective a curved shape in every direction. This gives us one best set of weights. We call the property strong convexity. The upper bound L helps us choose a safe step size.}
+\end{frame}
+
+% 7
+\begin{frame}{What counts as convergence?}
+We stop when the full gradient is small enough:
+\[
+\|\nabla F(w_k)\|_2\leq\varepsilon,\qquad \varepsilon=10^{-6}.
+\]
+This also bounds the gap from the best objective value:
+\[
+0\leq F(w_k)-F(w^\star)
+\leq\frac{\|\nabla F(w_k)\|_2^2}{2\lambda}
+\leq 5\times10^{-11}\quad\text{when the check passes.}
+\]
+\begin{itemize}
+  \item Stop after 400 updates even if the target is not met.
+  \item Matching test accuracy does not mean training is finished.
+  \item ADMM also checks its two copies and inner solve.
+\end{itemize}
+\note{Our target is a gradient size below ten to the minus six. Passing this check bounds the remaining objective error. A run can use all four hundred updates without passing. Aoqi will explain how the methods take those steps.}
+\end{frame}
+
+\section{Methods}
+
+% 8
+\begin{frame}{Four implementations}
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{lll}
+\toprule
+Solver & Main idea & Code owner \\
+\midrule
+GD & Follow the downhill direction & WANG Zeqing \\
+Nesterov & Look ahead, then step & LIU Xuyang \\
+FISTA & Step, then shrink the weights & WU Aoqi \\
+ADMM & Update two copies, then match them & ZHAO Jixin \\
+\bottomrule
+\end{tabular}
+\par\medskip
+All four minimize $F(w)=f(w)+\frac{\lambda}{2}\|w\|_2^2$.
+\sourcecredit{Modules: \texttt{algorithms/gd.py}, \texttt{nesterov.py},
+\texttt{fista.py}, \texttt{admm.py}.}
+\note{Each of us implemented one method. Gradient descent follows the downhill direction. Nesterov looks ahead, and FISTA adds a shrink step. ADMM works with two copies of the weights.}
+\end{frame}
+
+% 9
+\begin{frame}{Gradient descent}
+\[
+w_{k+1}=w_k-\eta_k\nabla F(w_k),\qquad \eta_k\text{ starts at }1/L.
+\]
+\begin{itemize}
+  \item Start with all weights at zero.
+  \item If the loss plus penalty does not fall enough, halve the step:
+\end{itemize}
+\[
+F(w_k-\eta_k\nabla F(w_k))
+\leq F(w_k)-10^{-4}\eta_k\|\nabla F(w_k)\|_2^2.
+\]
+\begin{block}{How the error bound shrinks}
+With step $1/L$, the bound shrinks by a fixed factor each update:
+\[
+F(w_k)-F(w^\star)\leq
+(1-\mu/L)^k\,[F(w_0)-F(w^\star)].
+\]
+\end{block}
+\note{Gradient descent moves against the gradient. We start with step size one over L. If the objective does not fall enough, we halve the step and try again. This is our simple baseline.}
+\end{frame}
+
+% 10
+\begin{frame}{Nesterov accelerated gradient}
+Initialize $w_0=v_0=0$ and $t_0=1$. At update $k$:
+\[
+\begin{aligned}
+w_{k+1}&=v_k-\frac{1}{L}\nabla F(v_k),\\
+t_{k+1}&=\frac{1+\sqrt{1+4t_k^2}}{2},\\
+v_{k+1}&=w_{k+1}+\frac{t_k-1}{t_{k+1}}(w_{k+1}-w_k).
+\end{aligned}
+\]
+\begin{itemize}
+  \item $v_k$ looks ahead using the last two weight vectors.
+  \item The objective-error bound falls as $O(1/k^2)$.
+  \item We use the basic schedule, with no restart.
+  \item Some updates can increase the objective.
+\end{itemize}
+\note{Nesterov takes a step from a look-ahead point called v. It uses the last movement to build the next look-ahead point. Our code uses the basic momentum schedule. Some steps can raise the objective.}
+\end{frame}
+
+% 11
+\begin{frame}{FISTA: gradient plus proximal step}
+FISTA handles the loss $f$ and penalty $g$ in separate steps.
+\[
+\operatorname{prox}_{\eta g}(a)
+=\arg\min_w\left\{g(w)+\frac{\|w-a\|_2^2}{2\eta}\right\}
+=\frac{a}{1+\eta\lambda}.
+\]
+\begin{block}{Take a loss step, then shrink the weights}
+\[
+w_{k+1}=
+\frac{v_k-\eta\nabla f(v_k)}{1+\eta\lambda},
+\qquad \eta=1/L_f.
+\]
+\end{block}
+\begin{itemize}
+  \item Use the same look-ahead rule as Nesterov.
+  \item Apply the L2 penalty once, through the shrink step.
+  \item The objective-error bound falls as $O(1/k^2)$.
+\end{itemize}
+\sourcecredit{Beck and Teboulle, SIAM Journal on Imaging Sciences, 2009.}
+\note{FISTA separates the loss from the penalty. First it takes a step using the loss gradient. Then it divides the weights by one plus eta times lambda. This simple shrink step handles the L2 penalty.}
+\end{frame}
+
+% 12
+\begin{frame}{Why Nesterov and FISTA overlap here}
+For this L2 penalty and the default step sizes,
+\[
+\begin{aligned}
+\frac{v-\nabla f(v)/L_f}{1+\lambda/L_f}
+&=\frac{L_fv-\nabla f(v)}{L_f+\lambda}\\[0.3em]
+&=v-\frac{\nabla f(v)+\lambda v}{L_f+\lambda}\\[0.3em]
+&=v-\frac{1}{L}\nabla F(v).
+\end{aligned}
+\]
+\begin{itemize}
+  \item Here, both formulas give the \alert{same update}.
+  \item Same start and momentum mean the curves overlap.
+  \item Different penalties or step sizes can change this.
+\end{itemize}
+\note{The first line is the FISTA update. After rearranging it, we get the Nesterov update on the last line. With the same start and momentum, both follow the same path apart from rounding. This depends on our penalty and step sizes.}
+\end{frame}
+
+% 13
+\begin{frame}{ADMM: split the loss and penalty}
+ADMM gives the loss and penalty their own weight vectors:
+\[
+\min_{w,z}f(w)+\frac{\lambda}{2}\|z\|_2^2
+\quad\text{subject to }w=z.
+\]
+The variable $u$ tracks their disagreement. We use $\rho=1$.
+\[
+\begin{aligned}
+w_{k+1}&=\arg\min_w\left\{f(w)+\frac{\rho}{2}\|w-z_k+u_k\|_2^2\right\},\\
+z_{k+1}&=\frac{\rho}{\rho+\lambda}(w_{k+1}+u_k),\\
+u_{k+1}&=u_k+w_{k+1}-z_{k+1}.
+\end{aligned}
+\]
+\begin{itemize}
+  \item Updating $w$ needs an inner Newton solve.
+  \item Updating $z$ uses a direct formula.
+\end{itemize}
+\sourcecredit{Boyd et al., Foundations and Trends in Machine Learning, 2011.}
+\note{ADMM gives the loss and penalty separate copies of the weights. The copies must agree at the solution. Updating w needs an inner solve, while z has a direct formula. The variable u tracks the disagreement.}
+\end{frame}
+
+% 14
+\begin{frame}{Work per update and stopping}
+\renewcommand{\arraystretch}{1.4}
+\centering
+\begin{tabular}{lll}
+\toprule
+Method & Work on dense data & Extra work \\
+\midrule
+GD & $O(nd)$ & Check the step \\
+Nesterov / FISTA & $O(nd)$ & Check the full gradient \\
+ADMM & $O(nd^2+d^3)$ per Newton step & May need several inner steps \\
+\bottomrule
+\end{tabular}
+\par\medskip
+\raggedright
+ADMM allows 50 Newton steps per outer update.
+Its inner gradient tolerance is $10^{-10}$.
+\[
+r_{k+1}=w_{k+1}-z_{k+1},\qquad
+s_{k+1}=\rho(z_{k+1}-z_k).
+\]
+\alert{The same update count can mean very different amounts of work.}
+\note{One gradient update costs about n times d operations. ADMM may solve several matrix systems inside one outer update. The residuals check agreement and movement of its copies. Jixin will compare both update counts and time.}
+\end{frame}
+
+\section{Results}
+
+% 15
+\begin{frame}{Experimental setup}
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lrrr}
+\toprule
+Dataset & Train & Test & Parameters, including bias \\
+\midrule
+Synthetic & 1,500 & 500 & 51 \\
+Breast cancer & 426 & 143 & 31 \\
+\bottomrule
+\end{tabular}
+\par\medskip
+\raggedright
+\begin{itemize}
+  \item 75/25 split, seed 0. Keep class proportions similar.
+  \item Learn feature scaling from training data only.
+  \item Same start, $\lambda=0.01$, 400 updates and $10^{-6}$ target.
+  \item Recheck final scores with the shared code.
+  \item Time the solver call, including setup and logging.
+\end{itemize}
+\sourcecredit{Saved runs: \texttt{results/summary.json} and
+\texttt{results/breast\_cancer/summary.json}.}
+\note{We use the same split and settings for all four methods. Feature scaling uses only the training data. The shared code checks the final results again. Our timer covers the solver call, but excludes data loading and imports.}
+\end{frame}
+
+% 16
+\begin{frame}{Synthetic: all four pass the gradient check}
+\input{tables/synthetic.tex}
+\begin{itemize}
+  \item All reach $F(w)\approx0.4932140405$ and 73.80\% test accuracy.
+  \item GD takes 136 updates; Nesterov and FISTA take 138.
+  \item ADMM takes 195 outer updates and passes its extra checks.
+\end{itemize}
+\alert{GD reaches the target in slightly fewer updates here.}
+\sourcecredit{One saved run, seed 0. Repeat timings before ranking small differences.}
+\note{All four pass the gradient check on the synthetic data. They reach the same objective and test accuracy. GD uses slightly fewer updates than Nesterov and FISTA. These times come from one run per method.}
+\end{frame}
+
+% 17
+\begin{frame}{Synthetic objective versus iteration}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.68\textwidth}
+\includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{\deckroot/../../../figures/obj_vs_iter.pdf}
+\end{column}
+\begin{column}{0.29\textwidth}
+\small
+$F(w_0)=\log 2$.
+\par\medskip
+All curves approach the same objective.
+\par\medskip
+Nesterov and FISTA overlap.
+\par\medskip
+This scale hides tiny differences near the end.
+\end{column}
+\end{columns}
+\sourcecredit{Raw training objective $F(w_k)$; iteration zero is initialization.}
+\note{The horizontal axis counts updates. The vertical axis shows loss plus penalty. All curves approach the same level, and Nesterov overlaps with FISTA. The table gives a more precise stopping check than this plot.}
+\end{frame}
+
+% 18
+\begin{frame}{Synthetic objective versus time}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.68\textwidth}
+\includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{\deckroot/../../../figures/obj_vs_time.pdf}
+\end{column}
+\begin{column}{0.29\textwidth}
+\small
+ADMM's inner solves take more time here.
+\par\medskip
+The other three finish close together.
+\par\medskip
+We need repeated runs to compare small time differences.
+\end{column}
+\end{columns}
+\sourcecredit{Curves use internal cumulative time; table wall time covers the entire solver call.}
+\note{This plot changes the horizontal axis from updates to time. ADMM takes longer in this run because of its inner solves. The other timings are close. Repeated runs would help us compare those small differences.}
+\end{frame}
+
+% 19
+\begin{frame}{Breast cancer: the budget ends first}
+\input{tables/breast_cancer.tex}
+\begin{itemize}
+  \item All use 400 updates. \alert{None reaches the $10^{-6}$ target.}
+  \item Test accuracy is 96.50\% for all, but gradient sizes differ.
+  \item Nesterov and FISTA have lower objective values than GD here.
+\end{itemize}
+\sourcecredit{Same seed, $\lambda$ and update budget. The separate 1,000-update ADMM check
+in the report is outside this comparison.}
+\note{All four methods use the full budget on this dataset. None passes the gradient target. They still have the same test accuracy. Nesterov and FISTA reach a lower objective than GD within the budget.}
+\end{frame}
+
+% 20
+\begin{frame}{Breast-cancer objective versus iteration}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.68\textwidth}
+\includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{\deckroot/../../../figures/breast_cancer/obj_vs_iter.pdf}
+\end{column}
+\begin{column}{0.29\textwidth}
+\small
+Most of the visible drop happens early.
+\par\medskip
+The curves look flat before the target is met.
+\par\medskip
+Check the gradient sizes in the table.
+\end{column}
+\end{columns}
+\sourcecredit{Raw objective on a linear scale. Looking flat does not mean the stopping check passed.}
+\note{The objective drops quickly and then looks flat. The gradient sizes still exceed our target. The graph shows the broad pattern. The table tells us whether each run passed the stopping check.}
+\end{frame}
+
+% 21
+\begin{frame}{What the results tell us}
+\renewcommand{\arraystretch}{1.4}
+\centering
+\begin{tabular}{p{0.39\textwidth}p{0.51\textwidth}}
+\toprule
+What we see & What it means \\
+\midrule
+Same synthetic results & All four pass the gradient check. \\
+Nesterov and FISTA overlap & Their update formulas match here. \\
+Same breast-cancer accuracy & Training can still be unfinished. \\
+ADMM takes longer here & Work inside each update matters. \\
+\bottomrule
+\end{tabular}
+\note{All four methods pass on the synthetic data. Nesterov and FISTA match because their formulas match here. On breast cancer, the same accuracy appears before the gradient target is met. Xuyang will close with what this means for choosing a solver.}
+\end{frame}
+
+\section{Conclusion}
+
+% 22
+\begin{frame}{Choosing a solver for this problem}
+\begin{itemize}
+  \item \textbf{GD:} a simple starting point that works well here.
+  \item \textbf{Nesterov:} uses the last movement to look ahead.
+  \item \textbf{FISTA:} handles the penalty with a cheap shrink step.
+  \item \textbf{ADMM:} separates the problem, but adds inner solves.
+\end{itemize}
+\begin{block}{Practical conclusion}
+Compare time at the same training precision.
+Check the work inside each update.
+\end{block}
+\note{GD is a useful starting point for this problem. Nesterov and FISTA follow the same path with our settings. ADMM separates the problem, but its inner solve adds work here. Compare time at the same training precision.}
+\end{frame}
+
+% 23
+\begin{frame}{Limitations and next experiments}
+\begin{itemize}
+  \item Two small datasets, one split and one timing per method.
+  \item Breast cancer needs more updates to reach the target.
+  \item We have not tested tuned momentum or restarts.
+\end{itemize}
+\begin{block}{Next experiments}
+Repeat timings with fixed thread settings.
+Compare at the same error target, then test other settings and splits.
+\end{block}
+These runs do not tell us which solver is always fastest.
+\note{We tested two small datasets with one split each. The breast-cancer runs need more updates. Next, we would repeat timings and compare at the same error target. Other step sizes and momentum rules are future experiments.}
+\end{frame}
+
+% 24
+\begin{frame}{Conclusion and questions}
+\begin{block}{Main finding}
+All four solve the synthetic problem, with different amounts of work.
+On breast cancer, equal test accuracy comes before the training target is met.
+\end{block}
+\centering
+\medskip
+\begin{tabular}{ll}
+LIU Xuyang & 26123832r \\
+WANG Zeqing & 26029011r \\
+WU Aoqi & 26027031r \\
+ZHAO Jixin & 26009105r \\
+\end{tabular}
+\par\bigskip
+\large Thank you. We welcome your questions.
+\note{The same training problem can take different amounts of work. Test accuracy can match while training is still unfinished. We need both prediction scores and a stopping check. Thank you for listening.}
+\end{frame}
+
+\appendix
+\section{Q\&A backup}
+
+% 25
+\begin{frame}{Backup: ADMM residual thresholds}
+With $\varepsilon=10^{-6}$ and $d$ parameters:
+\[
+\begin{aligned}
+\epsilon_{\rm primal}
+&=\varepsilon\left(\sqrt d+\max(\|w_{k+1}\|_2,\|z_{k+1}\|_2)\right),\\
+\epsilon_{\rm dual}
+&=\varepsilon\left(\sqrt d+\|\rho u_{k+1}\|_2\right).
+\end{aligned}
+\]
+The implementation requires all of the following:
+\[
+\|r_{k+1}\|_2\leq\epsilon_{\rm primal},\qquad
+\|s_{k+1}\|_2\leq\epsilon_{\rm dual},\qquad
+\|\nabla F(w_{k+1})\|_2\leq\varepsilon.
+\]
+\begin{itemize}
+  \item The inner Newton solve must also meet its tolerance.
+  \item Metrics evaluate the original $F(w)$ at the returned $w$.
+  \item $\rho$ is a penalty coefficient, separate from the Newton step size.
+\end{itemize}
+\end{frame}
+
+% 26
+\begin{frame}{Backup: references and code}
+\small
+\begin{thebibliography}{9}
+\bibitem{boyd2004}
+S. Boyd and L. Vandenberghe.
+\emph{Convex Optimization}. Cambridge University Press, 2004.
+\bibitem{beck2009}
+A. Beck and M. Teboulle.
+``A Fast Iterative Shrinkage-Thresholding Algorithm for Linear Inverse Problems.''
+\emph{SIAM Journal on Imaging Sciences}, 2(1):183--202, 2009.
+\bibitem{boyd2011}
+S. Boyd, N. Parikh, E. Chu, B. Peleato and J. Eckstein.
+``Distributed Optimization and Statistical Learning via the Alternating
+Direction Method of Multipliers.''
+\emph{Foundations and Trends in Machine Learning}, 3(1):1--122, 2011.
+\end{thebibliography}
+\sourcecredit{Local implementation: \texttt{algorithms/}. Shared runner:
+\texttt{experiments/run\_compare.py}. Saved numerical evidence: \texttt{results/}.}
+\end{frame}
+
+\end{document}
