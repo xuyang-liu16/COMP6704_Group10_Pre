@@ -35,22 +35,22 @@ COMP6704 · 口头报告 2026年11月3日 · 30 分钟 + 10 分钟问答
 
 最小化平均逻辑损失加上 L2 惩罚项：
 
-\[
+$$
 \min_w \; F(w) = f(w) + g(w), \quad
 f(w)=\tfrac{1}{n}\sum_i \log\bigl(1+e^{-y_i x_i^\top w}\bigr),\quad
 g(w)=\tfrac{\lambda}{2}\|w\|_2^2
-\]
+$$
 
-其中 \(\lambda=0.01\)。共享工具在 [`problem.py`](problem.py)、[`data.py`](data.py)、[`metrics.py`](metrics.py)。
+其中 $\lambda=0.01$。共享工具在 [`problem.py`](problem.py)、[`data.py`](data.py)、[`metrics.py`](metrics.py)。
 
 ## 📂 算法文件位置
 
 | 文件 | 方法 | 负责人 | 实现要点 |
 | --- | --- | --- | --- |
-| [`algorithms/gd.py`](algorithms/gd.py) | 梯度下降 | 王泽卿 | 全批量 GD + Armijo 回退；步长与 \(1/L\) 相关 |
-| [`algorithms/nesterov.py`](algorithms/nesterov.py) | Nesterov | 刘旭洋 | 前瞻点动量；一般凸 \(t\) 日程；在 \(\|\nabla F(w)\|\) 上停机 |
+| [`algorithms/gd.py`](algorithms/gd.py) | 梯度下降 | 王泽卿 | 全批量 GD + Armijo 回退；步长与 $1/L$ 相关 |
+| [`algorithms/nesterov.py`](algorithms/nesterov.py) | Nesterov | 刘旭洋 | 前瞻点动量；一般凸 $t$ 日程；在 $\Vert\nabla F(w)\Vert$ 上停机 |
 | [`algorithms/fista.py`](algorithms/fista.py) | FISTA | 武澳奇 | 只对损失求梯度 + L2 近端闭式收缩；动量与 Nesterov 同构 |
-| [`algorithms/admm.py`](algorithms/admm.py) | ADMM | 赵纪鑫 | 拆分 \(w/z\)、对偶更新、残差检验与内层求解 |
+| [`algorithms/admm.py`](algorithms/admm.py) | ADMM | 赵纪鑫 | 拆分 $w,z$、对偶更新、残差检验与内层求解 |
 
 **不要跨改**其他成员的算法文件。分工见 [`AGENTS.md`](AGENTS.md)。
 
