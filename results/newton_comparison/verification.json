@@ -1,0 +1,437 @@
+{
+  "independent_newton_checks": [
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 1,
+      "method": "gd",
+      "objective_gap": 8.57763859940519e-12,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 1,
+      "method": "nesterov",
+      "objective_gap": 6.18033402233209e-12,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 1,
+      "method": "fista",
+      "objective_gap": 6.18033402233209e-12,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 1,
+      "method": "admm",
+      "objective_gap": 8.33266788902165e-12,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 1,
+      "method": "admm_matched",
+      "objective_gap": -1.1102230246251565e-16,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 1,
+      "method": "newton",
+      "objective_gap": 1.9679258222993212e-12,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 1,
+      "method": "newton_strict",
+      "objective_gap": -1.1102230246251565e-16,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 1,
+      "method": "gd",
+      "objective_gap": 4.578695755874662e-11,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 1,
+      "method": "nesterov",
+      "objective_gap": 4.166594846921612e-11,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 1,
+      "method": "fista",
+      "objective_gap": 4.166594846921612e-11,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 1,
+      "method": "admm",
+      "objective_gap": 4.488896754306637e-11,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 1,
+      "method": "admm_matched",
+      "objective_gap": 1.3877787807814457e-17,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 1,
+      "method": "newton",
+      "objective_gap": 5.349887199912473e-13,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 1,
+      "method": "newton_strict",
+      "objective_gap": 1.3877787807814457e-17,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 0.01,
+      "method": "admm",
+      "objective_gap": -1.1102230246251565e-16,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 0.1,
+      "method": "admm",
+      "objective_gap": 8.044287458375265e-12,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 8.33266788902165e-12,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 0,
+      "rho": 10.0,
+      "method": "admm",
+      "objective_gap": 8.796186001802653e-12,
+      "reference_gradient": 7.227133789059296e-17
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 0.01,
+      "method": "admm",
+      "objective_gap": 1.3877787807814457e-17,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 0.1,
+      "method": "admm",
+      "objective_gap": 3.788823421668752e-11,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 4.488896754306637e-11,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 0,
+      "rho": 10.0,
+      "method": "admm",
+      "objective_gap": 4.5860149011645035e-11,
+      "reference_gradient": 9.268476961157169e-13
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 1,
+      "rho": 1.0,
+      "method": "gd",
+      "objective_gap": 8.051170841127941e-12,
+      "reference_gradient": 1.3299653140799971e-15
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 1,
+      "rho": 1.0,
+      "method": "nesterov",
+      "objective_gap": 6.06648065115678e-12,
+      "reference_gradient": 1.3299653140799971e-15
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 1,
+      "rho": 1.0,
+      "method": "fista",
+      "objective_gap": 6.06648065115678e-12,
+      "reference_gradient": 1.3299653140799971e-15
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 1,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 8.45534753324273e-12,
+      "reference_gradient": 1.3299653140799971e-15
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 2,
+      "rho": 1.0,
+      "method": "gd",
+      "objective_gap": 1.0306366871049022e-11,
+      "reference_gradient": 6.189155752705068e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 2,
+      "rho": 1.0,
+      "method": "nesterov",
+      "objective_gap": 8.666511952526434e-12,
+      "reference_gradient": 6.189155752705068e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 2,
+      "rho": 1.0,
+      "method": "fista",
+      "objective_gap": 8.666567463677666e-12,
+      "reference_gradient": 6.189155752705068e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 2,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 1.0618061985212535e-11,
+      "reference_gradient": 6.189155752705068e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 3,
+      "rho": 1.0,
+      "method": "gd",
+      "objective_gap": 9.616640817000643e-12,
+      "reference_gradient": 7.409539083038874e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 3,
+      "rho": 1.0,
+      "method": "nesterov",
+      "objective_gap": 7.949196856316121e-12,
+      "reference_gradient": 7.409539083038874e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 3,
+      "rho": 1.0,
+      "method": "fista",
+      "objective_gap": 7.949196856316121e-12,
+      "reference_gradient": 7.409539083038874e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 3,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 1.0082157331225972e-11,
+      "reference_gradient": 7.409539083038874e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 4,
+      "rho": 1.0,
+      "method": "gd",
+      "objective_gap": 8.922917960063614e-12,
+      "reference_gradient": 9.395425978651341e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 4,
+      "rho": 1.0,
+      "method": "nesterov",
+      "objective_gap": 1.3780643293159756e-12,
+      "reference_gradient": 9.395425978651341e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 4,
+      "rho": 1.0,
+      "method": "fista",
+      "objective_gap": 1.3781198404672068e-12,
+      "reference_gradient": 9.395425978651341e-17
+    },
+    {
+      "dataset": "synthetic",
+      "seed": 4,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 9.29167853769286e-12,
+      "reference_gradient": 9.395425978651341e-17
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 1,
+      "rho": 1.0,
+      "method": "gd",
+      "objective_gap": 4.418639065750796e-11,
+      "reference_gradient": 6.18060756341856e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 1,
+      "rho": 1.0,
+      "method": "nesterov",
+      "objective_gap": 4.0913508692064227e-11,
+      "reference_gradient": 6.18060756341856e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 1,
+      "rho": 1.0,
+      "method": "fista",
+      "objective_gap": 4.0913522569852034e-11,
+      "reference_gradient": 6.18060756341856e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 1,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 4.437798739598264e-11,
+      "reference_gradient": 6.18060756341856e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 2,
+      "rho": 1.0,
+      "method": "gd",
+      "objective_gap": 4.5366516099321075e-11,
+      "reference_gradient": 4.1722854216517087e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 2,
+      "rho": 1.0,
+      "method": "nesterov",
+      "objective_gap": 3.7222697146788164e-11,
+      "reference_gradient": 4.1722854216517087e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 2,
+      "rho": 1.0,
+      "method": "fista",
+      "objective_gap": 3.722271102457597e-11,
+      "reference_gradient": 4.1722854216517087e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 2,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 4.5306564055991316e-11,
+      "reference_gradient": 4.1722854216517087e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 3,
+      "rho": 1.0,
+      "method": "gd",
+      "objective_gap": 4.523377505893933e-11,
+      "reference_gradient": 1.6313075335596122e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 3,
+      "rho": 1.0,
+      "method": "nesterov",
+      "objective_gap": 3.688821470504422e-11,
+      "reference_gradient": 1.6313075335596122e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 3,
+      "rho": 1.0,
+      "method": "fista",
+      "objective_gap": 3.688820082725641e-11,
+      "reference_gradient": 1.6313075335596122e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 3,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 4.4593162495942806e-11,
+      "reference_gradient": 1.6313075335596122e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 4,
+      "rho": 1.0,
+      "method": "gd",
+      "objective_gap": 4.540373632622163e-11,
+      "reference_gradient": 6.737183161010272e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 4,
+      "rho": 1.0,
+      "method": "nesterov",
+      "objective_gap": 3.1072908135421073e-11,
+      "reference_gradient": 6.737183161010272e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 4,
+      "rho": 1.0,
+      "method": "fista",
+      "objective_gap": 3.1072908135421073e-11,
+      "reference_gradient": 6.737183161010272e-13
+    },
+    {
+      "dataset": "breast_cancer",
+      "seed": 4,
+      "rho": 1.0,
+      "method": "admm",
+      "objective_gap": 4.564985889299322e-11,
+      "reference_gradient": 6.737183161010272e-13
+    }
+  ],
+  "rho_equals_lambda_first_subproblem_verified": true
+}

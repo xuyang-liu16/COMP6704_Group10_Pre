@@ -15,3 +15,5 @@ slides/.pptx-build/
 slides/beamer_preview/
 slides/beamer_preview_v2/
 slides/final_preview/
+report/latex/main.pdf
+*.bbl
